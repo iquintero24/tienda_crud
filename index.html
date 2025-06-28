@@ -12,23 +12,34 @@
     <main>
         <form id="formProduct">
           <label for="product">
-              Ingrese un producto
-             <input type="text" name="productName" id="productName">
+             <input type="text" name="productName" id="productName" placeholder="Ingrese un producto">
           </label>
          
         
           <label for="price">
-            Ingrese el precio del producto
-            <input type="number" name="productPrice" id="productPrice">
+            <input type="number" name="productPrice" id="productPrice" placeholder="Ingrese el precio del producto">
           </label>
 
           <button class="save" type="submit" name="submit">Agregar</button>
 
         </form>
 
-        <section id="product">
-          <p>producto</p>
-          <p></p>
+
+         <form id="formProductEdit">
+          <label for="product">
+             <input type="text" name="productNameEdit" id="productNameEdit" placeholder="Ingrese un producto">
+          </label>
+         
+        
+          <label for="price">
+            <input type="number" name="productPriceEdit" id="productPriceEdit" placeholder="Ingrese el precio del producto">
+          </label>
+
+          <button class="save" id="editbutton" type="submit" name="submit">Editar</button>
+
+        </form>
+
+        <section id="product" class="product">
         </section>
 
     </main>
