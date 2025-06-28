@@ -4,43 +4,78 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <!-- Author & Description -->
+    <meta name="author" content="Isaac David Quintero Loo" />
+    <meta name="description" content="Product Inventory Management App built by Isaac David Quintero Loo, a coder from Riwi." />
+
+    <!-- Keywords for SEO -->
+    <meta name="keywords" content="Inventory, Product Management, JavaScript, HTML, CSS, Isaac Quintero, Riwi, Web Developer" />
+
+    <!-- Social Media Preview -->
+    <meta property="og:title" content="Shop App - Product Inventory Manager" />
+    <meta property="og:description" content="Built by Isaac David Quintero Loo, a passionate developer from Riwi." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/vite.svg" />
+    <meta property="og:url" content="https://your-website-url.com" />
+
     <link rel="stylesheet" href="./src/css/style.css">
-    <title>shop App</title>
+    <title>Shop App</title>
   </head>
   <body>
     
+    <header>
+      <h1 class="main-title">Product Inventory Management</h1>
+    </header>  
+
     <main>
-        <form id="formProduct">
-          <label for="product">
-             <input type="text" name="productName" id="productName" placeholder="Ingrese un producto">
-          </label>
-         
+      <!-- Add Product Form -->
+      <form id="formProduct">
+        <label for="productName">
+          <input 
+            type="text" 
+            name="productName" 
+            id="productName" 
+            placeholder="Enter product name"
+          />
+        </label>
         
-          <label for="price">
-            <input type="number" name="productPrice" id="productPrice" placeholder="Ingrese el precio del producto">
-          </label>
+        <label for="productPrice">
+          <input 
+            type="number" 
+            name="productPrice" 
+            id="productPrice" 
+            placeholder="Enter product price"
+          />
+        </label>
 
-          <button class="save" type="submit" name="submit">Agregar</button>
+        <button class="save" type="submit" name="submit">Add Product</button>
+      </form>
 
-        </form>
-
-
-         <form id="formProductEdit">
-          <label for="product">
-             <input type="text" name="productNameEdit" id="productNameEdit" placeholder="Ingrese un producto">
-          </label>
-         
+      <!-- Edit Product Form -->
+      <form id="formProductEdit" style="display: none;">
+        <label for="productNameEdit">
+          <input 
+            type="text" 
+            name="productNameEdit" 
+            id="productNameEdit" 
+            placeholder="Edit product name"
+          />
+        </label>
         
-          <label for="price">
-            <input type="number" name="productPriceEdit" id="productPriceEdit" placeholder="Ingrese el precio del producto">
-          </label>
+        <label for="productPriceEdit">
+          <input 
+            type="number" 
+            name="productPriceEdit" 
+            id="productPriceEdit" 
+            placeholder="Edit product price"
+          />
+        </label>
 
-          <button class="save" id="editbutton" type="submit" name="submit">Editar</button>
+        <button class="save" id="editbutton" type="submit" name="submit">Update Product</button>
+      </form>
 
-        </form>
-
-        <section id="product" class="product">
-        </section>
+      <!-- Product List Section -->
+      <section id="product" class="product"></section>
 
     </main>
     

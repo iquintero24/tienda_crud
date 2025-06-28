@@ -1,21 +1,28 @@
+// DOM references
 const $dom = {
   form: document.getElementById("formProduct"),
-  nameProduct: document.getElementById("productName"),
-  priceProduct: document.getElementById("productPrice"),
-  nameProductEdit: document.getElementById("productNameEdit"),
-  priceProductEdit: document.getElementById("productPriceEdit"),
-  product: document.getElementById("product"),
-  formEdit: document.getElementById("formProductEdit"),
+  productNameInput: document.getElementById("productName"),
+  productPriceInput: document.getElementById("productPrice"),
+  productNameEditInput: document.getElementById("productNameEdit"),
+  productPriceEditInput: document.getElementById("productPriceEdit"),
+  productContainer: document.getElementById("product"),
+  editForm: document.getElementById("formProductEdit"),
   editButton: document.getElementById("editbutton"),
 };
 
-const inventary = [];
+const inventory = [];
 
-function saveObject(name, price) {
+/**
+ * Saves a new product to the inventory if it does not already exist.
+ * @param {string} name - Product name.
+ * @param {number} price - Product price.
+ * @returns {boolean} - True if product was added, false if it already exists.
+ */
+function saveProduct(name, price) {
   const normalizedName = name.trim().toLowerCase();
-  const Exists = inventary.some((item) => item.name === normalizedName);
+  const alreadyExists = inventory.some((item) => item.name === normalizedName);
 
-  if (Exists) return false;
+  if (alreadyExists) return false;
 
   const newProduct = {
     id: crypto.randomUUID(),
@@ -23,91 +30,126 @@ function saveObject(name, price) {
     price: price,
   };
 
-  inventary.push(newProduct);
+  inventory.push(newProduct);
   return true;
 }
-function getProduct() {
-  $dom.product.innerHTML = "";
 
-  inventary.forEach((product) => {
-    $dom.product.innerHTML += `
-    <article>
-      <div class="products__value">
-          <p><span class="montserrat-title">Name Product:</span> ${product.name}</p>
-          <p><span class="montserrat-title">Price Product:</span>  ${product.price}</p>
-      </div>
+/**
+ * Renders the list of products in the DOM.
+ * Also attaches edit and delete event listeners to each button.
+ */
+function renderProducts() {
+  $dom.productContainer.innerHTML = "";
 
-      <div class="products__buttons">
-          <button class="editar" data-id="${product.id}">Editar</button>
-          <button class="eliminar" type="submit" name="submit">Eliminar</button>
-      </div>
+  inventory.forEach((product) => {
+    $dom.productContainer.innerHTML += `
+      <article>
+        <div class="products__value">
+            <p><span class="montserrat-title">Product Name:</span> ${product.name}</p>
+            <p><span class="montserrat-title">Product Price:</span> ${product.price}</p>
+        </div>
 
-    
-    </article>
-    <br>
+        <div class="products__buttons">
+            <button class="edit-button" data-id="${product.id}">Edit</button>
+            <button class="delete-button" data-id="${product.id}" type="button">Delete</button>
+        </div>
+      </article>
+      <br>
     `;
   });
 
-  $dom.product.setAttribute("style", "display:flex;");
-  const editButtons = document.querySelectorAll(".editar");
+  $dom.productContainer.style.display = "flex";
 
-  // Agregar el evento click a cada botón "Editar"
+  const editButtons = document.querySelectorAll(".edit-button");
+  const deleteButtons = document.querySelectorAll(".delete-button");
+
+  // Attach edit event to each edit button
   editButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       const productId = event.target.getAttribute("data-id");
-      // Aquí puedes agregar la lógica para editar el producto
-      const product = inventary.find((p) => p.id == productId); // Buscar el producto por ID
-      console.log(product);
+      const product = inventory.find((p) => p.id === productId);
 
-      $dom.form.setAttribute("style", "display:none;");
-      $dom.formEdit.setAttribute("style", "display:flex;");
+      if (!product) return;
 
-      $dom.nameProductEdit.value = product.name;
-      $dom.priceProductEdit.value = product.price;
+      $dom.form.style.display = "none";
+      $dom.editForm.style.display = "flex";
 
-      $dom.formEdit.setAttribute("data-edit-id", productId);
+      $dom.productNameEditInput.value = product.name;
+      $dom.productPriceEditInput.value = product.price;
+
+      $dom.editForm.setAttribute("data-edit-id", productId);
+    });
+  });
+
+  // Attach delete event to each delete button
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const productId = event.target.getAttribute("data-id");
+      const index = inventory.findIndex((p) => p.id === productId);
+
+      if (index !== -1) {
+        inventory.splice(index, 1); // Remove product
+        renderProducts(); // Re-render product list
+      }
     });
   });
 }
 
-$dom.editButton.addEventListener("click", () => {
-  const productId = $dom.editForm.getAttribute("data-edit-id");
-  const updatedName = $dom.nameProductEdit.value;
-  const updatedPrice = $dom.priceProductEdit.value;
+// Handle product edit form submission
+$dom.editButton.addEventListener("click", (e) => {
+  e.preventDefault();
 
-  // Actualizar el producto en el inventario
-  const productIndex = inventary.findIndex((p) => p.id == productId);
-  if (productIndex !== -1) {
-    inventary[productIndex].name = updatedName;
-    inventary[productIndex].price = updatedPrice;
+  const productId = $dom.editForm.getAttribute("data-edit-id");
+  const updatedName = $dom.productNameEditInput.value;
+  const updatedPrice = $dom.productPriceEditInput.value;
+
+  const normalizedName = updatedName.trim().toLowerCase();
+
+  // Check if another product has the same name
+  const nameConflict = inventory.some(
+    (item) => item.name === normalizedName && item.id !== productId
+  );
+
+  if (nameConflict) {
+    alert(`A product with the name "${updatedName}" already exists.`);
+    return;
   }
 
-  $dom.formEdit.setAttribute("style", "display:none;");
-  $dom.form.setAttribute("style", "display:flex;");
+  const index = inventory.findIndex((p) => p.id === productId);
+  if (index !== -1) {
+    inventory[index].name = normalizedName;
+    inventory[index].price = updatedPrice;
+  }
 
-  getProduct();
+  $dom.editForm.style.display = "none";
+  $dom.form.style.display = "flex";
+
+  renderProducts();
 });
 
+// Handle new product form submission
 $dom.form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const name = $dom.nameProduct.value;
-  const price = parseInt($dom.priceProduct.value, 10);
+
+  const name = $dom.productNameInput.value;
+  const price = parseInt($dom.productPriceInput.value, 10);
 
   if (!name) {
-    alert("El nombre del producto es obligatorio");
+    alert("Product name is required.");
     return;
   }
 
   if (isNaN(price)) {
-    alert("El precio debe ser un número válido");
+    alert("Product price must be a valid number.");
     return;
   }
 
-  const success = saveObject(name, price);
+  const success = saveProduct(name, price);
+
   if (!success) {
-    alert(`Product with ${name} name already exists in inventory`);
+    alert(`A product with the name "${name}" already exists in the inventory.`);
   } else {
-    getProduct();
+    renderProducts();
   }
 
   $dom.form.reset();
